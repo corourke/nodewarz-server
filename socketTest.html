@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HackWarz Test Page</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font: 13px Courier, Monoco; background-color: black; }
+
+        div#header { background-color: #222; padding-top: 5px; padding-left: 5px; padding-bottom: 20px }
+        #header div { float: left; padding-left: 10px; padding-right: 10px; }
+        #header p { color: white; float: left; }
+        div#level_box { color: yellow; margin: 3px; }
+        div#coin_box { color: orange; margin: 3px; }
+        div#error_box { float: right; background-color: #FF3333; color: white; margin: 3; visibility: hidden}
+
+        div#messages { background-color: #444; clear: left; overflow: auto; height: 250px;}
+        #messages p { color: #3F3; padding: 5px 10px; }
+        #messages p.error_message { color: #FF3333; }
+        #messages p.action_message { color: #3333FF}
+
+        form { padding: 2px; position: fixed; bottom: 0; width: 100%; }
+        form input { font: 13px Courier; background-color: #333333; color: green; border: 0; padding: 8px; width: 90%; margin-right: .5%; }
+        form button { width: 8%; border: none; padding: 10px; background-color: #006600 }
+    </style>
+</head>
+<body>
+
+    <div id="header"><p>Hackwarz!</p>
+        <div id="level_box">Level: <label id="level"></label></div>
+        <div id="coin_box">Bitcoins: <label id="bitcoins"></label></div>
+        <div id="error_box">You have been disconnected from the server.</div>
+    </div>
+
+    <div id="messages">
+    </div>
+
+    <form id="command" action="">
+        <input id="m" autocomplete="off"/>
+        <button>Send</button>
+    </form>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.1/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+    var socket = io('http://localhost:7000');
+
+    $('form').submit(function () {
+        var msg = $('#m').val();
+        if(msg.startsWith('#')) {
+            socket.emit('sync', msg.substring(1));
+        } else if(msg.startsWith('@1')) {
+            socket.emit('action', JSON.parse(
+                '{"type":"ADD_NODE","node":{"size":30,"health":30,"power":3,"owner":1,"x":100,"y":100,"color":"#3497B5"}}'
+               // '[{"id":1,},{"id":4,"size":60,"health":60,"power":6,"owner":1,"x":200,"y":150,"color":"#3497B5"},{"id":2,"size":40,"health":0,"power":4,"owner":0,"x":300,"y":100,"color":"#7BBC9B"},{"id":3,"size":50,"health":50,"power":5,"owner":2,"x":400,"y":150,"color":"#A43234"},{"id":5,"size":30,"health":30,"power":3,"owner":2,"x":500,"y":100,"color":"#A43234"}]}'
+            ));
+        } else if(msg.startsWith('@2')) {
+            socket.emit('action', JSON.parse('{"type":"SET_NODE_PROPS", "nodeProps":{"id":5, "selected":true}}'));
+        } else if(msg.startsWith('@')) {
+            try {
+                socket.emit('action', JSON.parse(msg.substring(1)));
+            } catch(e) {
+                logError(e);
+            }
+        } else {
+            socket.emit('message', msg);
+        }
+        $('#m').val('');
+        return false;
+    });
+
+    function updateScroll() {
+        var mssgHeight = $(window).height() - $('#header')[0].clientHeight - $('#command')[0].clientHeight;
+        $('#messages').css('height', mssgHeight+'px');
+        $('#messages').animate({ scrollTop: $('#messages')[0].scrollHeight}, 500);
+        // $('#messages').scrollTop($('#messages')[0].scrollHeight);
+    }
+
+    function log(str) {
+        $('#messages').append($('<p></p>').text(str));
+    }
+
+    function logError(str) {
+        $('#messages').append($('<p class="error_message"></p>').text(str));
+    }
+    socket.on('error_message', function (msg) {
+        logError(msg);
+        updateScroll();
+    });
+
+    socket.on('message', function (msg) {
+        log(msg);
+        updateScroll();
+    });
+
+    socket.on('chat', function (msg) {
+        log(msg);
+        updateScroll();
+    });
+
+    socket.on('action', function (msg) {
+        log("action: " + JSON.stringify(msg));
+        updateScroll();
+    });
+
+    socket.on('state', function (msg) {
+        log("state: " + JSON.stringify(msg));
+        updateScroll();
+    });
+
+    socket.on('level', function (msg) {
+        $('#level').text(msg);
+    });
+
+    socket.on('bitcoins', function (msg) {
+        $('#bitcoins').text(msg);
+    });
+
+    // Error events
+
+    socket.on('connect', function() {
+        log('Connected to server');
+    })
+
+    socket.on('disconnect', function () {
+        $('#error_box').css({visibility: "visible"});
+        log('You have been disconnected');
+    });
+
+    socket.on('reconnect', function () {
+        $('#error_box').css({visibility: "hidden"});
+        log('You have been reconnected');
+    });
+
+    socket.on('reconnect_error', function () {
+        $('#error_box').css({visibility: "visible"});
+    });
+
+    $(document).ready(function () {
+        $("#m").focus();
+        log('Start message with # for sync, @ for actions');
+    });
+
+</script>
+</body>
+</html>
+
+
