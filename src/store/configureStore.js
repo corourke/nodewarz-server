@@ -1,9 +1,10 @@
 import thunk from "redux-thunk"
 import {applyMiddleware, createStore} from "redux"
 import {composeWithDevTools} from "redux-devtools-extension"
-import {Map} from "immutable"
+import {fromJS, Map} from "immutable"
 
 import rootReducer from "../reducers/root"
+import {INITIAL_STATE} from "../reducers/constants"
 
 let store
 export default () => {
@@ -16,10 +17,10 @@ export default () => {
 
 // To make a new store for testing
 // TODO: should initial state have placeholders?
-export function makeStore(initialState = new Map()) {
+export function makeStore(initialState = INITIAL_STATE) {
     return createStore(
         rootReducer,
-        initialState,
+        fromJS(initialState),
         composeWithDevTools(
             applyMiddleware(thunk)
         )

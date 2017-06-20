@@ -1,0 +1,15 @@
+    {
+      "game": {
+        "clientId": clientId,
+        "connection": {
+          "state": "connected",
+          "connected": true
+        },
+        "userId": 1
+      },
+      "nodes": [
+        { "id": 1, "size": 30, "health": 30, "power": 3, "owner": 1, "x": 100, "y": 100, "color": "#3497B5" }
+      ],
+      "connections": [ [1, 2], [2, 3] ],
+      "attacks": [ {"attackNodeId": 2, "targetNodeId": 3} ]
+    }

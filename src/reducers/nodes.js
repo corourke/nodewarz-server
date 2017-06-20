@@ -1,7 +1,7 @@
 import {Map, List, fromJS} from "immutable"
 // import pf from "pretty-immutable"
 
-const INITIAL_STATE = fromJS(new List());
+const INITIAL_STATE = fromJS(new List())
 
 const DEFAULT_NODE = fromJS({
     id: 0,
@@ -11,7 +11,7 @@ const DEFAULT_NODE = fromJS({
     owner: 0,
     x: 100,
     y: 100
-});
+})
 
 export default function reducer(state = INITIAL_STATE, action) {
     // eslint-disable-next-line
@@ -64,7 +64,7 @@ export function toggleNodeSelected(nodeId) {
 
 /* SELECTORS */
 
-export function selectNodeList(state) {
+export function getNodeList(state) {
     if (List.isList(state)) {
         return state                // Assume a list of nodes
     } else if (Map.isMap(state)) {
@@ -75,18 +75,26 @@ export function selectNodeList(state) {
 }
 
 export function getNode(state, nodeId) {
-    const nodeList = selectNodeList(state)
+    const nodeList = getNodeList(state)
     return nodeList.find((node) => node.get('id') === nodeId)
 }
 
 export function nextNodeId(state) {
-    const nodeList = selectNodeList(state)
-    let maxNode = nodeList.max( (_a, _b) => {
-            const a = _a.get('id'), b = _b.get('id')
-            if (a < b) { return -1; }
-            if (a > b) { return 1; }
-            if (a === b) { return 0; }
-        })
+    const nodeList = getNodeList(state)
+    if (nodeList.size === 0) return 1
 
-    return maxNode.get('id')+1
+    let maxNode = nodeList.max((_a, _b) => {
+        const a = _a.get('id'), b = _b.get('id')
+        if (a < b) {
+            return -1
+        }
+        if (a > b) {
+            return 1
+        }
+        if (a === b) {
+            return 0
+        }
+    })
+
+    return maxNode.get('id') + 1
 }

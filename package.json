@@ -44,6 +44,7 @@
     "babel-preset-es2015": "^6.24.1",
     "jest": "^20.0.4",
     "nodemon": "^1.11.0",
-    "pretty-format": "^20.0.3"
+    "pretty-format": "^20.0.3",
+    "pretty-immutable": "^1.0.1"
   }
 }

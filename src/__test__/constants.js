@@ -55,12 +55,16 @@ export const red_node2 = {
 };
 
 export const network1 = {
+    game: {},
     nodes: [blue_node, blue_node2, green_node, red_node],
-    connections: []
+    connections: [],
+    attacks:[]
 };
 
 export const network2 = {
+    game: {},
     nodes: [blue_node, blue_node2, green_node, red_node, red_node2],
-    connections: [ [1,4], [4,2], [2,3], [3,5] ]
+    connections: [ [1,4], [4,2], [2,3], [3,5] ],
+    attacks:[]
 };
 

@@ -1,63 +1,30 @@
 import {fromJS, List, Map} from 'immutable';
 import {getNode, setNodeProps} from "./nodes"
+import pf from "pretty-immutable"
 
-const INITIAL_STATE = new Map()
+const INITIAL_STATE = new List()
 
 export default function reducer(state = INITIAL_STATE, action) {
 
     // eslint-disable-next-line
     switch (action.type) {
-        case 'SET_CLIENT_ID':
-            return state.set('clientId', action.clientId)
-
-        case 'SET_CONNECTION_STATE':
-            return state.set('connection', Map({
-                state: action.state,
-                connected: action.connected
-            }));
-
-        case 'SET_NETWORK':
-            return INITIAL_STATE.merge(fromJS(action.network))
-
-        case 'ADD_CONNECTION':
-            const new_conns = state.get("connections").push(fromJS(action.connection));
-            return state.merge({connections: new_conns});
 
         case 'NEW_ATTACK':
             // TODO: should we check that attack is not already in the list?
             // TODO: Check that the attack is along a connection
-            return state.update('attackList',
-                list => list.push(action.attack)
-            );
+            return state.push(action.attack)
+
         case 'RESET_ATTACKS':
-            return state.set('attackList', new List());
+            return new List();
 
         case 'REMOVE_ATTACKS':
-            return state.update('attackList', attacks =>
-                attacks.filter((m) => m.get('targetNodeId') !== action.nodeId)
-            );
+            return state.filter((m) => m.get('targetNodeId') !== action.nodeId)
+
     }
     return state;
 }
 
 /* ACTION CREATORS */
-
-export function setClientId(clientId) {
-    return {type: 'SET_CLIENT_ID', clientId};
-}
-
-export function setConnectionState(state, connected) {
-    return {type: 'SET_CONNECTION_STATE', state, connected};
-}
-
-
-export function setNetwork(_net) {
-    return {type: 'SET_NETWORK', network: _net}
-}
-
-export function addConnection(_conn) {
-    return {type: 'ADD_CONNECTION', connection: _conn}
-}
 
 export function resetAttacks() {
     return {type: 'RESET_ATTACKS'}
@@ -83,9 +50,20 @@ export function Attack(attacker, target) {
 
 /* SELECTORS */
 
+export function getAttacksList(state) {
+    if (List.isList(state)) {
+        return state                // Assume a list of nodes
+    } else if (Map.isMap(state)) {
+        return state.get('attacks')   // Assume redux state
+    } else {                        // Assume redux store
+        return state.getState().get('attacks')
+    }
+}
+
 // Get array of attacks
 export function getAttacks(_store) {
-    return _store.getState().get('attackList');
+    const attackList = getAttacksList(_store)
+    return attackList;
 }
 
 // Returns true if the attack and target Nodes are already in the attackList

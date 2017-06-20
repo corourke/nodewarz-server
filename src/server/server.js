@@ -4,6 +4,7 @@ export function startServer(store) {
     const io = new Server().attach(7000)
 
     store.subscribe(
+        // TODO: can we just emit changed state?
         () => io.emit('state', store.getState().toJS())
     )
 
@@ -19,7 +20,8 @@ export function startServer(store) {
 
     socket.on('sync', function () {
         console.log('sync')
-        socket.emit('state', store.getState().toJS())
+        // TODO: don't broadcast state -- it should be requested from client as needed
+        io.emit('state', store.getState().toJS())
     })
 
     socket.on('action', function (action) {
