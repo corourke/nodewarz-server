@@ -11,7 +11,8 @@ export const blue_node = {
     power: 3,
     owner: BLUE,
     x: 100, y:100,
-    color: "#3497B5"
+    color: "#3497B5",
+    selected: false
 }
 
 export const blue_node2 = {
@@ -21,7 +22,8 @@ export const blue_node2 = {
     power: 6,
     owner: BLUE,
     x: 200, y:150,
-    color: "#3497B5"
+    color: "#3497B5",
+    selected: false
 }
 
 export const green_node = {
@@ -31,7 +33,8 @@ export const green_node = {
     power: 4,
     owner: GREEN,
     x: 300, y:100,
-    color: "#7BBC9B"
+    color: "#7BBC9B",
+    selected: false
 }
 
 export const red_node = {
@@ -41,7 +44,8 @@ export const red_node = {
     power: 5,
     owner: RED,
     x: 400, y:150,
-    color: "#A43234"
+    color: "#A43234",
+    selected: false
 };
 
 export const red_node2 = {
@@ -51,7 +55,8 @@ export const red_node2 = {
     power: 3,
     owner: RED,
     x: 500, y:100,
-    color: "#A43234"
+    color: "#A43234",
+    selected: false
 };
 
 export const network1 = {

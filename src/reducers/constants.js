@@ -22,5 +22,6 @@ export const DEFAULT_NODE = fromJS({
     owner: 0,
     x: 100,
     y: 100,
-    color: "#999999"
+    color: "#999999",
+    selected: false
 });

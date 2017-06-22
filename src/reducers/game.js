@@ -41,7 +41,6 @@ export function setConnectionState(state, connected) {
     return {type: 'SET_CONNECTION_STATE', state, connected}
 }
 
-
 export function setNetwork(_net) {
     return {type: 'SET_NETWORK', network: _net}
 }
