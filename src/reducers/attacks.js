@@ -12,7 +12,9 @@ export default function reducer(state = INITIAL_STATE, action) {
         case 'NEW_ATTACK':
             // TODO: should we check that attack is not already in the list?
             // TODO: Check that the attack is along a connection
-            return state.push(action.attack)
+            // TODO: Handle the case of an assist
+            // TODO: Distribute power evenly across attacks from same node
+            return state.push(fromJS(action.attack))
 
         case 'RESET_ATTACKS':
             return new List();
@@ -76,6 +78,7 @@ export function attackInProgress(_store, attackerId, targetId) {
 // Return an array of nodes that are under attack
 export function nodesUnderAttack(_store) {
     return getAttacks(_store).reduce((list, attack) => {
+        console.log("nodesUnderAttack(): attack: " + pf(attack))
         let target = attack.get('targetNodeId');
         return (!list.includes(target)) ? list.push(target) : list;
     }, List([]));

@@ -24,6 +24,9 @@ export default function reducer(state = INITIAL_STATE, action) {
                 connected: action.connected
             }))
 
+        case 'SET_USER_ID':
+            return state.set('userId', action.userId)
+
         case 'SET_NETWORK':
             return INITIAL_STATE.merge(fromJS(action.network))
 
@@ -39,6 +42,10 @@ export function setClientId(clientId) {
 
 export function setConnectionState(state, connected) {
     return {type: 'SET_CONNECTION_STATE', state, connected}
+}
+
+export function setUserId(userId) {
+    return {type: 'SET_USER_ID', userId}
 }
 
 export function setNetwork(_net) {
