@@ -2,12 +2,15 @@ import Server from 'socket.io'
 import { setUserId } from '../reducers/game'
 import { makeStore } from '../store/configureStore'
 
-var nextUser = 1; // TODO: Temporary user assignment
+var nextUserId = 1; // TODO: Temporary user assignment
 
 export function startServer(store) {
     const io = new Server().attach(7000)
 
     io.on('connection', (socket) => {
+        // Keep track of the userId that we assign to this socket/login
+        let thisUserId = 0;
+
         // A new user has connected
         console.log('A user connected. Socket #' + socket.id)
 
@@ -18,14 +21,14 @@ export function startServer(store) {
 
         socket.on('login', function(msg) {
             console.log('user login: ' + msg)
-            socket.emit('action', setUserId(nextUser))
-            nextUser++
+            thisUserId = nextUserId
+            socket.emit('action', setUserId(thisUserId))
+            nextUserId++
         })
 
         socket.on('sync', function() {
             console.log('sync')
-            // TODO: don't broadcast state -- it should be requested from client as needed
-            io.emit('state', store.getState().toJS())
+            socket.emit('state', store.getState().toJS())
         })
 
         socket.on('action', function(action) {
