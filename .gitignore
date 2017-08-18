@@ -58,4 +58,5 @@ typings/
 .env
 
 nodewarz-server.iml
+.idea/
 
